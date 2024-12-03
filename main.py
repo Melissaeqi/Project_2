@@ -74,17 +74,44 @@ class WeatherLocation():
         else:
             raise Exception(f"Ошибка {response.status_code}: {response.text}")
 
-# Тестовые координаты
-lat = '37.7749'   # Широта
-lon = '-122.4194' # Долгота
+    def check_bad_weather(self, temperature: float, wind_speed: float, precipitation_probability: float):
+        """
+            Функция для определения неблагоприятных погодных условий.
 
-# Получение ключа местоположения и данных о погоде
-print(
-    WeatherLocation(API_KEY).get_key_on_lat_lon(lat, lon),     # Получаем ключ местоположения
-    WeatherLocation(API_KEY).get_weather_on_key(               # Получаем данные погоды по ключу
-        WeatherLocation(API_KEY).get_key_on_lat_lon(lat, lon)  # Вызов метода получения ключа
-    )
-)
+            Параметры:
+            - temperature (float): Температура в градусах Цельсия.
+            - wind_speed (float): Скорость ветра в км/ч.
+            - precipitation_probability (float): Вероятность осадков в %.
+
+            Условия:
+            - температура ниже -10°C или выше 30°C,
+            - скорость ветра выше 40 км/ч,
+            -вероятность осадков выше 70%
+
+            Возвращает:
+            - "Хорошая погода" / "Плохая погода"
+        """
+        if (temperature < -10 or temperature > 30) or (wind_speed > 40) or (precipitation_probability > 70):
+            return "Плохая погода"
+        return  "Хорошая погода"
+
+
+temperature = -9.0
+wind_speed = 35.0
+precipitation_probability = 50.0
+print(WeatherLocation(API_KEY).check_bad_weather(45, 70, 30))
+
+# # Тестовые координаты
+# lat = '37.7749'   # Широта
+# lon = '-122.4194' # Долгота
+#
+# # Получение ключа местоположения и данных о погоде
+# print(
+#     WeatherLocation(API_KEY).get_key_on_lat_lon(lat, lon),     # Получаем ключ местоположения
+#     WeatherLocation(API_KEY).get_weather_on_key(               # Получаем данные погоды по ключу
+#         WeatherLocation(API_KEY).get_key_on_lat_lon(lat, lon)  # Вызов метода получения ключа
+#     )
+# )
 
 if __name__ == '__main__':
     # Запускаем Flask приложение
