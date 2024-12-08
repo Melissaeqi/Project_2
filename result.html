@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <title>Результат проверки погоды</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f0f8ff;
+            color: #333;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 20px;
+        }
+
+        h1 {
+            color: #0078d7;
+            margin-bottom: 20px;
+        }
+
+        div {
+            background: #ffffff;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px;
+            padding: 20px;
+            margin-bottom: 20px;
+            max-width: 400px;
+            width: 100%;
+        }
+
+        h2 {
+            margin-bottom: 10px;
+            color: #333;
+        }
+
+        p {
+            margin: 5px 0;
+            line-height: 1.6;
+        }
+
+        a {
+            display: inline-block;
+            margin-top: 10px;
+            text-decoration: none;
+            color: #0078d7;
+            font-weight: bold;
+        }
+
+        a:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+
+    <h1>Результат проверки погоды</h1>
+
+    <div>
+        <h2>Город 1: {{ start }}</h2>
+        <p>Температура: {{ start_weather["Температура (°C)"] }}°C</p>
+        <p>Влажность: {{ start_weather["Влажность (%)"] }}%</p>
+        <p>Скорость ветра: {{ start_weather["Скорость ветра (км/ч)"] }} км/ч</p>
+        <p>Вероятность дождя: {{ start_weather["Вероятность дождя (%)"] }}%</p>
+        <p>Статус погоды: <strong>{{ start_weather_status }}</strong></p>
+    </div>
+
+    <div>
+        <h2>Город 2: {{ end }}</h2>
+        <p>Температура: {{ end_weather["Температура (°C)"] }}°C</p>
+        <p>Влажность: {{ end_weather["Влажность (%)"] }}%</p>
+        <p>Скорость ветра: {{ end_weather["Скорость ветра (км/ч)"] }} км/ч</p>
+        <p>Вероятность дождя: {{ end_weather["Вероятность дождя (%)"] }}%</p>
+        <p>Статус погоды: <strong>{{ end_weather_status }}</strong></p>
+    </div>
+
+    <a href="/check-weather">Назад</a>
+
+</body>
+</html>
+
+
