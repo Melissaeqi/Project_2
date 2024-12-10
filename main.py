@@ -6,7 +6,7 @@ from flask import Flask, render_template, request
 app = Flask(__name__)
 
 # API-ключ для доступа к AccuWeather API
-API_KEY = "G8jXGh6NmvTSBHTZq4WhT14gLOi6amFj"
+API_KEY = "axg6AzdAAAMLmEfXuNjGB8RhfThj3fBW"
 
 @app.route('/')
 def index():
@@ -52,13 +52,13 @@ def check_weather():
             start_weather_status = weather_location.check_bad_weather(
                 start_weather["Температура (°C)"],
                 start_weather["Скорость ветра (км/ч)"],
-                start_weather["Вероятность дождя (%)"]
+                start_weather["Вероятность осадков (%)"]
             )
 
             end_weather_status = weather_location.check_bad_weather(
                 end_weather["Температура (°C)"],
                 end_weather["Скорость ветра (км/ч)"],
-                end_weather["Вероятность дождя (%)"]
+                end_weather["Вероятность осадков (%)"]
             )
 
             # Отправляем результаты на страницу
@@ -105,6 +105,29 @@ class WeatherLocation():
         else:
             raise Exception(f"Ошибка {response.status_code}: {response.text}")
 
+    def get_weather_rain_on_key(self, locationKey):
+        """
+        Получение текущих погодных данных о вероятности осадков в течение часа по ключу местоположения, так как другая API не предоставляет таких данных.
+        """
+        url = f"http://dataservice.accuweather.com/forecasts/v1/hourly/1hour/{locationKey}"
+        params = {
+            "apikey": self.api_key,  # API-ключ
+            "details": "true",  # Полные данные
+            "language": "ru-ru"  # Язык ответа
+        }
+        response = requests.get(url, params=params)
+
+        if response.status_code == 200:
+            rain = response.json()[0].get("PrecipitationProbability", 0)  # Извлекаем вероятность дождя
+            return rain
+        # Проверяем статус ответа
+        elif response.status_code == 401:
+             raise Exception("Неверный API-ключ.")
+        elif response.status_code == 404:
+            raise Exception("Ресурс не найден.")
+        else:
+            raise Exception(f"Ошибка {response.status_code}: {response.text}")
+
     def get_weather_on_key(self, locationKey):
         """
         Получение текущих погодных данных по ключу местоположения.
@@ -124,8 +147,9 @@ class WeatherLocation():
             "Температура (°C)": weather_data[0]["Temperature"]["Metric"]["Value"],        # Температура в градусах Цельсия
             "Влажность (%)": weather_data[0]["RelativeHumidity"],                         # Влажность в процентах
             "Скорость ветра (км/ч)": weather_data[0]["Wind"]["Speed"]["Metric"]["Value"], # Скорость ветра
-            "Вероятность дождя (%)": weather_data[0].get("PrecipitationProbability", 0)   # Вероятность осадков (может отсутствовать)
+            "Вероятность осадков (%)": self.get_weather_rain_on_key(locationKey)                                            # Вероятность осадков (может отсутствовать)
         }
+
         # Проверяем статус ответа
         if response.status_code == 200:
             return result
@@ -203,26 +227,26 @@ if __name__ == '__main__':
 
 
 
-
-# city = "Москва"
 #
-# print(
-#     WeatherLocation(API_KEY).get_key_on_city(city),     # Получаем ключ местоположения
-#     WeatherLocation(API_KEY).get_weather_on_key(               # Получаем данные погоды по ключу
-#         WeatherLocation(API_KEY).get_key_on_city(city)  # Вызов метода получения ключа
-#    )
-#  )
+city = "Москва"
+
+print(
+    WeatherLocation(API_KEY).get_key_on_city(city),     # Получаем ключ местоположения
+    WeatherLocation(API_KEY).get_weather_on_key(               # Получаем данные погоды по ключу
+        WeatherLocation(API_KEY).get_key_on_city(city)  # Вызов метода получения ключа
+   )
+ )
 
 # temperature = -9.0
 # wind_speed = 35.0
 # precipitation_probability = 50.0
 # print(WeatherLocation(API_KEY).check_bad_weather(45, 70, 30))
 #
-# Тестовые координаты
+# #Тестовые координаты
 # lat = '37.7749'   # Широта
 # lon = '-122.4194' # Долгота
 # #
-# # Получение ключа местоположения и данных о погоде
+# Получение ключа местоположения и данных о погоде
 # print(
 #     WeatherLocation(API_KEY).get_key_on_lat_lon(lat, lon),     # Получаем ключ местоположения
 #     WeatherLocation(API_KEY).get_weather_on_key(               # Получаем данные погоды по ключу
