@@ -147,7 +147,7 @@ class WeatherLocation():
             "Температура (°C)": weather_data[0]["Temperature"]["Metric"]["Value"],        # Температура в градусах Цельсия
             "Влажность (%)": weather_data[0]["RelativeHumidity"],                         # Влажность в процентах
             "Скорость ветра (км/ч)": weather_data[0]["Wind"]["Speed"]["Metric"]["Value"], # Скорость ветра
-            "Вероятность осадков (%)": self.get_weather_rain_on_key(locationKey)                                            # Вероятность осадков (может отсутствовать)
+            "Вероятность осадков (%)": self.get_weather_rain_on_key(locationKey)          # Вероятность осадков
         }
 
         # Проверяем статус ответа
